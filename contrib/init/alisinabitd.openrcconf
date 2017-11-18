@@ -1,0 +1,33 @@
+# /etc/conf.d/alisinabitd: config file for /etc/init.d/alisinabitd
+
+# Config file location
+#ALISINABITD_CONFIGFILE="/etc/alisinabit/alisinabit.conf"
+
+# What directory to write pidfile to?  (created and owned by $ALISINABITD_USER)
+#ALISINABITD_PIDDIR="/var/run/alisinabitd"
+
+# What filename to give the pidfile
+#ALISINABITD_PIDFILE="${ALISINABITD_PIDDIR}/alisinabitd.pid"
+
+# Where to write alisinabitd data (be mindful that the blockchain is large)
+#ALISINABITD_DATADIR="/var/lib/alisinabitd"
+
+# User and group to own alisinabitd process
+#ALISINABITD_USER="alisinabit"
+#ALISINABITD_GROUP="alisinabit"
+
+# Path to alisinabitd executable
+#ALISINABITD_BIN="/usr/bin/alisinabitd"
+
+# Nice value to run alisinabitd under
+#ALISINABITD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+ALISINABITD_OPTS="-disablewallet"
+
+# The timeout in seconds OpenRC will wait for alisinabitd to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+ALISINABITD_SIGTERM_TIMEOUT=60

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Alisinabit
+Comment=Alisinabit P2P Cryptocurrency
+Comment[fr]=Alisinabit, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Alisinabit, eşten eşe kriptografik sanal para birimi
+Exec=alisinabit-qt %u
+Terminal=false
+Type=Application
+Icon=alisinabit128
+MimeType=x-scheme-handler/alisinabit;
+Categories=Office;Finance;

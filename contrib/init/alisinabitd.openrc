@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/alisinabit/.alisinabit" ]; then
+	ALISINABITD_DEFAULT_DATADIR="/var/lib/alisinabit/.alisinabit"
+else
+	ALISINABITD_DEFAULT_DATADIR="/var/lib/alisinabitd"
+fi
+
+ALISINABITD_CONFIGFILE=${ALISINABITD_CONFIGFILE:-/etc/alisinabit/alisinabit.conf}
+ALISINABITD_PIDDIR=${ALISINABITD_PIDDIR:-/var/run/alisinabitd}
+ALISINABITD_PIDFILE=${ALISINABITD_PIDFILE:-${ALISINABITD_PIDDIR}/alisinabitd.pid}
+ALISINABITD_DATADIR=${ALISINABITD_DATADIR:-${ALISINABITD_DEFAULT_DATADIR}}
+ALISINABITD_USER=${ALISINABITD_USER:-${ALISINABIT_USER:-alisinabit}}
+ALISINABITD_GROUP=${ALISINABITD_GROUP:-alisinabit}
+ALISINABITD_BIN=${ALISINABITD_BIN:-/usr/bin/alisinabitd}
+ALISINABITD_NICE=${ALISINABITD_NICE:-${NICELEVEL:-0}}
+ALISINABITD_OPTS="${ALISINABITD_OPTS:-${ALISINABIT_OPTS}}"
+
+name="Alisinabit Core Daemon"
+description="Alisinabit cryptocurrency P2P network daemon"
+
+command="/usr/bin/alisinabitd"
+command_args="-pid=\"${ALISINABITD_PIDFILE}\" \
+		-conf=\"${ALISINABITD_CONFIGFILE}\" \
+		-datadir=\"${ALISINABITD_DATADIR}\" \
+		-daemon \
+		${ALISINABITD_OPTS}"
+
+required_files="${ALISINABITD_CONFIGFILE}"
+start_stop_daemon_args="-u ${ALISINABITD_USER} \
+			-N ${ALISINABITD_NICE} -w 2000"
+pidfile="${ALISINABITD_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${ALISINABITD_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${ALISINABITD_USER}:${ALISINABITD_GROUP}" \
+	"${ALISINABITD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${ALISINABITD_USER}:${ALISINABITD_GROUP}" \
+	"${ALISINABITD_PIDDIR}"
+
+	checkpath -f \
+	-o ${ALISINABITD_USER}:${ALISINABITD_GROUP} \
+	-m 0660 \
+	${ALISINABITD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${ALISINABITD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run alisinabitd."
+		eerror "The setting must appear in ${ALISINABITD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Alisinabit Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

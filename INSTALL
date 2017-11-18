@@ -1,0 +1,5 @@
+Building Alisinabit
+
+See doc/build-*.md for instructions on building alisinabitd,
+the intended-for-services, no-graphical-interface, reference
+implementation of Alisinabit.

@@ -1,0 +1,6 @@
+usr/local/bin/alisinabit-qt usr/bin
+share/pixmaps/alisinabit32.xpm usr/share/pixmaps
+share/pixmaps/alisinabit16.xpm usr/share/pixmaps
+share/pixmaps/alisinabit128.png usr/share/pixmaps
+debian/alisinabit-qt.desktop usr/share/applications
+debian/alisinabit-qt.protocol usr/share/kde4/services/

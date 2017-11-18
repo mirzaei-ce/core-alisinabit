@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[alisinabit.qt-translation-012x]
+file_filter = src/qt/locale/alisinabit_<lang>.ts
+source_file = src/qt/locale/alisinabit_en.ts
+source_lang = en
